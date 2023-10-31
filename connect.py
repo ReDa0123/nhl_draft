@@ -1,6 +1,6 @@
 """
 Sources of data:
-https://www.kaggle.com/datasets/mjavon/elite-prospects-hockey-stats-player-data/data (player_stats.csv and player_dim.csv)
+https://www.kaggle.com/datasets/mjavon/elite-prospects-hockey-stats-player-data/data (player_stats.csv + player_dim.csv)
 https://www.kaggle.com/datasets/mattop/nhl-draft-hockey-player-data-1963-2022/data (nhldraft.csv)
 """
 
@@ -10,6 +10,8 @@ import pandas as pd
 PLAYER_ID = 'PLAYER_ID'
 PLAYER_NAME = 'PLAYER_NAME'
 LEAGUE = 'LEAGUE'
+DRAFT_YEAR = 'draft_year'
+DRAFT_TEAM = 'draft_team'
 
 # Read original CSV files.
 player_stats_df = pd.read_csv('player_stats.csv', encoding='unicode_escape')
@@ -66,6 +68,15 @@ draft_info_df = draft_info_df[draft_info_df['year'] < 2019]
 # a bit of effort to resolve (from the top of my head there are two players named Sebastian Aho.)
 draft_info_df = draft_info_df.rename(columns={'player': PLAYER_NAME})
 joined_df = draft_info_df.merge(player_dim_df, on=PLAYER_NAME, how='outer')
+# Rename draft year and draft team columns
+joined_df = joined_df.rename(columns={'year': DRAFT_YEAR, 'team': DRAFT_TEAM})
+
+# Add draft info to player stats
+player_stats_df = player_stats_df.merge(
+    joined_df[[DRAFT_YEAR, 'overall_pick', DRAFT_TEAM, 'amateur_team', PLAYER_ID]],
+    on=PLAYER_ID,
+    how='left'
+)
 
 # Export to CSV.
 joined_df.to_csv('nhl_draft.csv', index=False)
