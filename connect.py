@@ -78,6 +78,10 @@ player_stats_df = player_stats_df.merge(
     how='left'
 )
 
+# Normalize column names in dfs
+joined_df.columns = joined_df.columns.str.upper()
+player_stats_df.columns = player_stats_df.columns.str.upper()
+
 # Export to CSV.
 joined_df.to_csv('nhl_draft.csv', index=False)
 player_stats_df.to_csv('nhl_player_stats.csv', index=False)
