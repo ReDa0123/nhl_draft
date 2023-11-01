@@ -100,10 +100,11 @@ player_stats_df['GPG'] = player_stats_df['G'] / player_stats_df['GP']
 player_stats_df['APG'] = player_stats_df['A'] / player_stats_df['GP']
 player_stats_df['PIMPG'] = player_stats_df['PIM'] / player_stats_df['GP']
 
-# Now let's categorize the newly added columns
+# Now let's categorize the newly added columns and points per game
 player_stats_df['GPG_CAT'] = pd.cut(player_stats_df['GPG'], per_game_categories_intervals, labels=categories)
 player_stats_df['APG_CAT'] = pd.cut(player_stats_df['APG'], per_game_categories_intervals, labels=categories)
 player_stats_df['PIMPG_CAT'] = pd.cut(player_stats_df['PIMPG'], per_game_categories_intervals, labels=categories)
+player_stats_df['PPG_CAT'] = pd.cut(player_stats_df['PPG'], per_game_categories_intervals, labels=categories)
 
 # Categorize plus minus and games played as quantiles
 player_stats_df['PLUS_MINUS_CAT'] = pd.qcut(player_stats_df['+/-'], 5, labels=categories)
