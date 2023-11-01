@@ -127,6 +127,17 @@ def categorize_season(row):
 
 player_stats_df['SEASON_CAT'] = player_stats_df.apply(categorize_season, axis=1)
 
+
+# Let's categorize seasons also if they are pre or in the salary cap era
+def is_in_cap_era(row):
+    first_year = int(str(row[LEAGUE_YEAR])[:4])
+    if first_year < 2005:
+        return 'PRE_CAP_ERA'
+    return 'IN_CAP_ERA'
+
+
+player_stats_df['IS_IN_CAP_ERA'] = player_stats_df.apply(is_in_cap_era, axis=1)
+
 # Categorize statistical columns for draft df
 # First let's add points per game, goals per game, assists per game and penalty minutes per game
 joined_df['PPG'] = joined_df['points'] / joined_df[GAMES_PLAYED]
