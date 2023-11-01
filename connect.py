@@ -138,6 +138,9 @@ def is_in_cap_era(row):
 
 player_stats_df['IS_IN_CAP_ERA'] = player_stats_df.apply(is_in_cap_era, axis=1)
 
+# Add season number to players
+player_stats_df['PLAYER_SEASON_NUMBER'] = player_stats_df.groupby(PLAYER_ID).cumcount() + 1
+
 # Categorize statistical columns for draft df
 # First let's add points per game, goals per game, assists per game and penalty minutes per game
 joined_df['PPG'] = joined_df['points'] / joined_df[GAMES_PLAYED]
