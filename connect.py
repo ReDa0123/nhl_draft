@@ -6,7 +6,6 @@ https://www.kaggle.com/datasets/mattop/nhl-draft-hockey-player-data-1963-2022/da
 
 import pandas as pd
 import numpy as np
-import math
 
 # Column name constants.
 PLAYER_ID = 'PLAYER_ID'
