@@ -198,9 +198,8 @@ amateur_leagues = {
         'Denmark', 'Germany', 'Germany-2', 'Germany Jr.', 'Norway', 'DEL', 'Slovakia-2', 'Belarus', 'Austria', 'Latvia',
     ),
     'north_america': (
-        'OHL', 'WHL', 'QMJHL', 'WCHL', 'WCHA', 'USHL', 'ECAC', 'OHA-Jr.', 'OMJHL', 'CMJHL', 'COJHL'
-                                                                                            'CCHA', 'H-East', 'BCHL',
-        'USDP/USHL', 'High-CT', 'AJHL', 'NAHL', 'Big Ten', 'NCHC', 'CCHL', 'OJHL',
+        'OHL', 'WHL', 'QMJHL', 'WCHL', 'WCHA', 'USHL', 'ECAC', 'OHA-Jr.', 'OMJHL', 'CMJHL', 'COJHL', 'CCHA',
+        'USDP/USHL', 'High-CT', 'AJHL', 'NAHL', 'Big Ten', 'NCHC', 'CCHL', 'OJHL', 'H-East', 'BCHL',
         'USMAAA', 'Ohio', 'WOHL', 'AHL', 'USDP/NAHL', 'CJHL', 'OPJHL', 'EJHL', 'IHL', 'WHA', 'SJHL', 'QJAHL', 'NEJHL',
         'MidJHL', 'MetJBHL', 'CIAU', 'BCJHL', 'SMAAAHL', 'OPJAHL', 'NOJHL', 'NCAA-Ind.', 'MetJAHL', 'MWJHL', 'MJHL',
     ),
