@@ -18,6 +18,7 @@ GAMES_PLAYED = 'games_played'
 OTHER = 'other'
 DRAFT_ROUND = 'draft_round'
 LEAGUE_YEAR = 'LEAGUE_YEAR'
+PPG = 'PPG'
 
 categories = ['very low', 'low', 'medium', 'high', 'very high']
 per_game_categories_intervals = [-np.inf, 0.2, 0.4, 0.6, 0.8, np.inf]
@@ -27,6 +28,9 @@ games_played_categories_intervals = [-np.inf, 100, 300, 500, 700, np.inf]
 player_stats_df = pd.read_csv('player_stats.csv', encoding='unicode_escape')
 player_dim_df = pd.read_csv('player_dim.csv', encoding='unicode_escape')
 draft_info_df = pd.read_csv('nhldraft.csv')
+
+# Copy original stats
+player_stats_original_df = player_stats_df.copy()
 
 # Filter out non-NHL players from stats.
 player_stats_df = player_stats_df.loc[player_stats_df[LEAGUE] == 'NHL']
@@ -104,7 +108,7 @@ player_stats_df['PIMPG'] = player_stats_df['PIM'] / player_stats_df['GP']
 player_stats_df['GPG_CAT'] = pd.cut(player_stats_df['GPG'], per_game_categories_intervals, labels=categories)
 player_stats_df['APG_CAT'] = pd.cut(player_stats_df['APG'], per_game_categories_intervals, labels=categories)
 player_stats_df['PIMPG_CAT'] = pd.cut(player_stats_df['PIMPG'], per_game_categories_intervals, labels=categories)
-player_stats_df['PPG_CAT'] = pd.cut(player_stats_df['PPG'], per_game_categories_intervals, labels=categories)
+player_stats_df['PPG_CAT'] = pd.cut(player_stats_df[PPG], per_game_categories_intervals, labels=categories)
 
 # Categorize plus minus and games played as quantiles
 player_stats_df['PLUS_MINUS_CAT'] = pd.qcut(player_stats_df['+/-'], 5, labels=categories)
@@ -143,13 +147,13 @@ player_stats_df['PLAYER_SEASON_NUMBER'] = player_stats_df.groupby(PLAYER_ID).cum
 
 # Categorize statistical columns for draft df
 # First let's add points per game, goals per game, assists per game and penalty minutes per game
-joined_df['PPG'] = joined_df['points'] / joined_df[GAMES_PLAYED]
+joined_df[PPG] = joined_df['points'] / joined_df[GAMES_PLAYED]
 joined_df['GPG'] = joined_df['goals'] / joined_df[GAMES_PLAYED]
 joined_df['APG'] = joined_df['assists'] / joined_df[GAMES_PLAYED]
 joined_df['PIMPG'] = joined_df['penalties_minutes'] / joined_df[GAMES_PLAYED]
 
 # Now let's categorize the newly added columns
-joined_df['PPG_CAT'] = pd.cut(joined_df['PPG'], per_game_categories_intervals, labels=categories)
+joined_df['PPG_CAT'] = pd.cut(joined_df[PPG], per_game_categories_intervals, labels=categories)
 joined_df['GPG_CAT'] = pd.cut(joined_df['GPG'], per_game_categories_intervals, labels=categories)
 joined_df['APG_CAT'] = pd.cut(joined_df['APG'], per_game_categories_intervals, labels=categories)
 joined_df['PIMPG_CAT'] = pd.cut(joined_df['PIMPG'], per_game_categories_intervals, labels=categories)
@@ -217,6 +221,26 @@ def categorize_amateur_league(row):
 
 
 joined_df['AMATEUR_LEAGUE_CAT'] = joined_df.apply(categorize_amateur_league, axis=1)
+
+
+# Add ppg from juniors (last year and average) to draft df
+def get_junior_stats(row):
+    if str(row[PLAYER_ID]) == 'nan':
+        return 0, 0
+
+    seasons_by_player = player_stats_original_df[player_stats_original_df[PLAYER_ID] == row[PLAYER_ID]].sort_values(
+        by=LEAGUE_YEAR
+    )
+    first_nhl_season_year = seasons_by_player[seasons_by_player[LEAGUE] == 'NHL'].iloc[0][LEAGUE_YEAR]
+    non_nhl_seasons = seasons_by_player[seasons_by_player[LEAGUE_YEAR] < first_nhl_season_year]
+    if non_nhl_seasons.empty:
+        return 0, 0
+    average_ppg_in_junior = non_nhl_seasons[PPG].mean()
+    return non_nhl_seasons.iloc[-1][PPG], average_ppg_in_junior
+
+
+joined_df['LAST_JUNIOR_YEAR_PPG'] = joined_df.apply(lambda row: get_junior_stats(row)[0], axis=1)
+joined_df['AVERAGE_JUNIOR_PPG'] = joined_df.apply(lambda row: get_junior_stats(row)[1], axis=1)
 
 # Add draft info to player stats
 player_stats_df = player_stats_df.merge(
