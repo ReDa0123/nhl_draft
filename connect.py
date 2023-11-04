@@ -242,9 +242,31 @@ def get_junior_stats(row):
 joined_df['LAST_JUNIOR_YEAR_PPG'] = joined_df.apply(lambda row: get_junior_stats(row)[0], axis=1)
 joined_df['AVERAGE_JUNIOR_PPG'] = joined_df.apply(lambda row: get_junior_stats(row)[1], axis=1)
 
+# Categorize newly added columns
+joined_df['LAST_JUNIOR_YEAR_PPG_CAT'] = pd.cut(
+    joined_df['LAST_JUNIOR_YEAR_PPG'], per_game_categories_intervals, labels=categories
+)
+joined_df['AVERAGE_JUNIOR_PPG_CAT'] = pd.cut(
+    joined_df['AVERAGE_JUNIOR_PPG'], per_game_categories_intervals, labels=categories
+)
+
+# Categorize height and weight
+bin_edges = [130, 175, 185, 195, 300]
+
+# Define labels for the intervals.
+labels = ['<175', '175-185', '185-195', 'GIANT']
+# Create a new column 'HEIGHT_CAT' with the intervals.
+joined_df['HEIGHT_CAT'] = pd.cut(joined_df['HEIGHT_CM'], bins=bin_edges, labels=labels, right=False)
+
+bin_edges = [50.0, 75.0, 85.0, 95.0, 105.0, 115.0, 130.0, 300]
+# Define labels for the intervals.
+labels = ['<75', '75-85', '85-95', '95-105', '105-115', '115-130', 'MAXICHONKER']
+joined_df['WEIGHT_CAT'] = pd.cut(joined_df['WEIGHT_KG'], bins=bin_edges, labels=labels, right=False)
+
 # Add draft info to player stats
 player_stats_df = player_stats_df.merge(
-    joined_df[[DRAFT_YEAR, 'overall_pick', DRAFT_TEAM, AMATEUR_LEAGUE, PLAYER_ID, 'AMATEUR_LEAGUE_CAT', DRAFT_ROUND]],
+    joined_df[[DRAFT_YEAR, 'overall_pick', DRAFT_TEAM, AMATEUR_LEAGUE, PLAYER_ID, 'AMATEUR_LEAGUE_CAT', DRAFT_ROUND,
+               'HEIGHT_CAT', 'WEIGHT_CAT']],
     on=PLAYER_ID,
     how='left'
 )
