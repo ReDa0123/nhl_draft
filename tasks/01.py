@@ -24,9 +24,8 @@ clm = cleverminer(df=draft_df, proc='4ftMiner',
                       ], 'minlen': 1, 'maxlen': 2, 'type': 'con'},
                   succ={
                       'attributes': [
-                          {'name': 'PPG_CAT', 'type': 'subset', 'minlen': 1, 'maxlen': 1},
-                          {'name': 'POINT_SHARES_CAT', 'type': 'subset', 'minlen': 1, 'maxlen': 1},
-                          {'name': 'PLUS_MINUS_CAT', 'type': 'subset', 'minlen': 1, 'maxlen': 1}
+                          {'name': 'PPG_CAT', 'type': 'one', 'value': 'very low'},
+                          {'name': 'PPG_CAT', 'type': 'one', 'value': 'low'},
                       ], 'minlen': 1, 'maxlen': 1, 'type': 'con'},
                   )
 clm.print_rulelist()
