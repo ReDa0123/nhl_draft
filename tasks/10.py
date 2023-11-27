@@ -4,11 +4,13 @@ import pandas as pd
 stats_df = pd.read_csv('../nhl_player_stats.csv', encoding='unicode_escape')
 draft_df = pd.read_csv('../nhl_draft.csv', encoding='unicode_escape')
 
+# What stat to use for the comparison
 desired_stat = 'PPG'
 
 season_of_players_grouped = stats_df.groupby('PLAYER_ID')
 
 for player_id, player_stats in season_of_players_grouped:
+    # Initialize variables
     first_three_season_stats = 0
     first_three_season_count = 0
     four_to_six_season_stats = 0
@@ -32,12 +34,14 @@ for player_id, player_stats in season_of_players_grouped:
             other_stats += row[desired_stat]
             other_count += 1
 
+    # Divide by the number of seasons to get the average
     first_three_season_stats /= first_three_season_count
     if four_to_six_season_count != 0:
         four_to_six_season_stats /= four_to_six_season_count
     if other_count != 0:
         other_stats /= other_count
 
+    # Add the new column to the draft dataframe
     gets_worse = first_three_season_stats >= four_to_six_season_stats >= other_stats
     draft_df.loc[draft_df['PLAYER_ID'] == player_id, 'GETS_WORSE'] = str(gets_worse)
 
@@ -49,6 +53,10 @@ draft_df['DRAFT_ROUND'] = draft_df['DRAFT_ROUND'].fillna(999)
 draft_df['DRAFT_ROUND'] = draft_df['DRAFT_ROUND'].replace([1, 2, 3], 'EARLY')
 draft_df['DRAFT_ROUND'] = draft_df['DRAFT_ROUND'].replace([4, 5, 6, 7, 8, 9, 10, 999], 'LATE')
 
+# Using the 4ftMiner procedure from the cleverminer package to find associative rules with confidence above 0.6
+# These player attributes were chosen as candidates for the antecedent: Weight, Height,
+# Average PPG in juniors, Nationality, Amateur league location, Draft round (Lat/Early)
+# Succedents: Gets worse
 clm = cleverminer(df=draft_df, proc='4ftMiner',
                   quantifiers={'conf': 0.6, 'Base': 10},
                   ante={

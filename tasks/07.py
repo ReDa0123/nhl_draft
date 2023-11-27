@@ -20,6 +20,12 @@ categories = ['very low', 'low', 'medium', 'high', 'very high']
 sortable_categories = [f'{index}_{value}' for index, value in enumerate(categories)]
 draft_df['PPG_CAT'] = draft_df['PPG_CAT'].replace(categories, sortable_categories)
 
+# Using the SD4ftMiner procedure from the cleverminer package to find associative rules with base over 25 (both)
+# Confidence ratio of 2.0 and absolute confidence difference of 0.13
+# Chosen antecedents: Nationality, Position, Penalty minutes per game, +/- per game, Amateur league location,
+# Average PPG in juniors, Weight, Height
+# Succedents: PPG (high + very high)
+# Groups of Draft round Early and Late
 clm = cleverminer(
     df=draft_df,
     proc='SD4ftMiner',
