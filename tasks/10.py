@@ -9,6 +9,8 @@ desired_stat = 'PPG'
 
 season_of_players_grouped = stats_df.groupby('PLAYER_ID')
 
+draft_df = draft_df.assign(GETS_WORSE=None)
+
 for player_id, player_stats in season_of_players_grouped:
     # Initialize variables
     first_three_season_stats = 0
