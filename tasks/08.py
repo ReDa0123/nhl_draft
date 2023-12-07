@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
+from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
 draft_df = pd.read_csv('../nhl_draft.csv', encoding='unicode_escape')
@@ -15,9 +16,10 @@ selected_columns = ['NATIONALITY_CAT', 'POSITION', 'AGE', 'DRAFT_ROUND', 'HEIGHT
 
 # Create the subset DataFrame
 rf_subset = draft_df[selected_columns]
-from sklearn.preprocessing import LabelEncoder
+
 label_encoder = LabelEncoder()
 
+# Encode the categorical columns
 rf_subset['NATIONALITY_CAT'] = label_encoder.fit_transform(rf_subset['NATIONALITY_CAT'])
 rf_subset['POSITION'] = label_encoder.fit_transform(rf_subset['POSITION'])
 rf_subset['HEIGHT_CAT'] = label_encoder.fit_transform(rf_subset['HEIGHT_CAT'])
@@ -42,7 +44,8 @@ rf_subset['DRAFT_ROUND'] = rf_subset['DRAFT_ROUND'].fillna(123)
 
 # Display the first few rows of the subset
 print(rf_subset.head())
-from sklearn.model_selection import train_test_split
+
+# Split the data into training and testing sets
 train, test = train_test_split(rf_subset, test_size=0.2, random_state=420)
 X_train = train.drop('DRAFT_ROUND', axis=1)
 y_train = train['DRAFT_ROUND']
@@ -65,6 +68,8 @@ rf_report = classification_report(test["DRAFT_ROUND"], rf_y_pred,  zero_division
 print(rf_report)
 rf_confmatrix = confusion_matrix(test["DRAFT_ROUND"], rf_y_pred)
 class_labels = sorted(set(test["DRAFT_ROUND"]))
+
+# Plot the confusion matrix
 plt.figure(figsize=(8, 6))
 sns.heatmap(rf_confmatrix, annot=True, fmt="d", cmap="Blues", xticklabels=class_labels, yticklabels=class_labels)
 plt.title("Confusion Matrix")

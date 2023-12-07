@@ -9,7 +9,7 @@ draft_df = draft_df[draft_df['PPG_CAT'].notnull()]
 # Categorize draft rounds
 draft_df['DRAFT_ROUND'] = draft_df['DRAFT_ROUND'].fillna(123)
 draft_df['AFTER_2004'] = (draft_df['DRAFT_YEAR'] > 2004).astype(int)
-print(draft_df['AFTER_2004'])
+
 # Fill missing height and weight with most common values
 draft_df['HEIGHT_CAT'] = draft_df['HEIGHT_CAT'].fillna('185-195')
 draft_df['WEIGHT_CAT'] = draft_df['WEIGHT_CAT'].fillna('85-95')
